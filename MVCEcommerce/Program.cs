@@ -1,8 +1,11 @@
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews(); //*
 var app = builder.Build();
-app.MapControllerRoute(
+
+app.MapControllerRoute( //*
     name: "Default",
-    pattern: "{controller=Home}/{action=Index}/{id?} ");
-app.UseStaticFiles();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseStaticFiles(); //*wwwroot için 
 app.Run();
