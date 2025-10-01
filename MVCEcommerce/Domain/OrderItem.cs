@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCEcommerce.Domain;
 
-public class OrderItem
+public class OrderItem    // sipariş detay tablosu - sipariş içindeki ürünler
 {
     public Guid Id { get; set; }
     public Guid productId { get; set; }

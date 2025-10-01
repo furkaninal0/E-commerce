@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCEcommerce.Domain;
 
-public class Address
+public class Address  // adresler tablosu
 {
     public Guid Id { get; set; }
     public Guid userId { get; set; }
@@ -25,7 +25,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
 
         builder.Property(a => a.Name)
             .IsRequired();
-                builder.Property(a => a.Text)
+        builder.Property(a => a.Text)
             .IsRequired();
 
     }

@@ -4,7 +4,7 @@ using MVCEcommerce.Domain;
 
 namespace MVCEcommerce.Domain;
 
-public class Province
+public class Province  // iller tablosu
 {
     public int Id { get; set; }
     public string? Name { get; set; }

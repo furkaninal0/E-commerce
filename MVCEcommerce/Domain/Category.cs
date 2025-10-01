@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCEcommerce.Domain;
 
-public class Category : _EntityBase
+public class Category : _EntityBase  
 {
   
-    public required string NameTr { get; set; }
-    public required string NameEn { get; set; }   
+    public  string NameTr { get; set; }
+    public  string NameEn { get; set; }   
     public byte[]? Image { get; set; }
 
     public ICollection<Product> Products { get; set; } = new List<Product>();

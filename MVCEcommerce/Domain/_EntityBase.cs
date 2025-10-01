@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCEcommerce.Domain;
 
-public class _EntityBase
+public class _EntityBase  // tüm varlıkların ortak özellikleri
 {
 
     public Guid Id { get; set; }

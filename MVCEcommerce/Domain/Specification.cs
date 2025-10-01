@@ -1,6 +1,6 @@
 ﻿namespace MVCEcommerce.Domain;
 
-public class Specification : _EntityBase
+public class Specification : _EntityBase  // kategori ürün özellikleri
 {
     public  string NameTr {  get; set; }
     public  string NameEn {  get; set; }

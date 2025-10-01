@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace MVCEcommerce.Domain;
 
-public class CarouselImage : _EntityBase
+public class CarouselImage : _EntityBase // ana sayfa kaydırıcı resimleri
 {
     public byte[] Image { get; set; }
     public String Url { get; set; }

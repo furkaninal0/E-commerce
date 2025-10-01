@@ -1,6 +1,6 @@
 ﻿namespace MVCEcommerce.Domain;
 
-public class ShoppingCartItem
+public class ShoppingCartItem    // site içerisindeki sepete ekleme 
 {
     public Guid Id { get; set; }
     public Guid userId { get; set; }

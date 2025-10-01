@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCEcommerce.Domain;
 
-public class Brand : _EntityBase
+public class Brand : _EntityBase   // marka
 {
   
     public string? Name { get; set; }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCEcommerce.Domain;
 
-public class ProductImage : _EntityBase
+public class ProductImage : _EntityBase    //ürünün birden fazla fotoğrafı olabilir
 {
 
     public Guid productId { get; set; }
