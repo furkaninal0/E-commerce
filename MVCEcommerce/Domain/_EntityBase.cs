@@ -1,24 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
 
-namespace MVCEcommerce.Domain;
+namespace MVCECommerceData;
 
-public class _EntityBase  // tüm varlıkların ortak özellikleri
+public abstract class _EntityBase
 {
-
     public Guid Id { get; set; }
-    public Guid userId { get; set; }
     public DateTime CreatedAt { get; set; }
-    public bool IsEnabled { get; set; }
-    public User? User { get; set; }
+
+    [Display(Name = "Aktif")]
+    public bool IsEnabled { get; set; } = true;
+
 }
 
 public class _EntityBaseConfiguration : IEntityTypeConfiguration<_EntityBase>
 {
     public void Configure(EntityTypeBuilder<_EntityBase> builder)
     {
-        //tpt
-        builder.ToTable("_EntityBase");
 
     }
 }

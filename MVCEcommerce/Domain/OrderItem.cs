@@ -1,32 +1,34 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MVCEcommerce.Domain;
+namespace MVCECommerceData;
 
-public class OrderItem    // sipariş detay tablosu - sipariş içindeki ürünler
+public class OrderItem
 {
     public Guid Id { get; set; }
-    public Guid productId { get; set; }
-    public Guid orderId { get; set; }
+    public Guid ProductId { get; set; }
+    public Guid OrderId { get; set; }
     public int Quantity { get; set; }
     public decimal Price { get; set; }
+
     public Order? Order { get; set; }
     public Product? Product { get; set; }
 
-
-
-
+    [NotMapped]
+    public decimal Amount => Price * Quantity;
 }
+
 public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 {
     public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
-        //tpt
-        builder.ToTable("OrderItems");
+        builder
+            .ToTable("OrderItems");
 
-        builder.Property(p => p.Price)
+        builder
+            .Property(p => p.Price)
             .HasPrecision(18, 4);
 
     }
-
 }

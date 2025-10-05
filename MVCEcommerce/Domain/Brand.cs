@@ -1,31 +1,42 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MVCEcommerce.Domain;
+namespace MVCECommerceData;
 
-public class Brand : _EntityBase   // marka
+public class Brand : _EntityBase
 {
-  
+    [Display(Name = "Ad")]
+    [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
     public string? Name { get; set; }
-    public byte[] logo { get; set; }
-    
-    public ICollection<Product> Products { get; set; } = new List<Product>();
 
+    [Display(Name = "Logo")]
+    public byte[]? Logo { get; set; }
+
+    [NotMapped]
+    public IFormFile? LogoFile { get; set; }
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }
 public class BrandConfiguration : IEntityTypeConfiguration<Brand>
 {
     public void Configure(EntityTypeBuilder<Brand> builder)
     {
-        //tpt
-        builder.ToTable("Brands");
+        builder
+            .ToTable("Brands");
 
-        builder.Property(p => p.Name)
+        builder
+            .HasIndex(p => new { p.Name });
+
+        builder
+            .Property(p => p.Name)
             .IsRequired();
-        builder.HasMany(p=>p.Products)
-                .WithOne(p=>p.Brand)
-                .HasForeignKey(p=>p.brandId)
-                .OnDelete(DeleteBehavior.Restrict);
 
+        builder
+            .HasMany(p => p.Products)
+            .WithOne(p => p.Brand)
+            .HasForeignKey(p => p.BrandId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
-
 }

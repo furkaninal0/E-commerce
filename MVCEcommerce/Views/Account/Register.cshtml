@@ -1,0 +1,72 @@
+﻿@model RegisterUserViewModel
+   
+@{
+    Layout = "_AccountLayout";
+    ViewData["Title"] = "Yeni Üyelik";
+
+}
+
+<div class="row">
+    <div class=" d-none d-md-block col-md-8" >
+        <img src="~/images/register.jpg" alt="Kaydol" class="img-fluid w-50 align-content-lg-end"  />
+    </div>
+    <div class="col-12 col-md-8">
+        <form method="post">
+            <div class="card">
+                <div class="card-body">
+                    <div class="alert alert-danger" asp-validation-summary="ModelOnly"> </div>
+                    <div class=" mb-3  ">
+                        <div class="col-12  ">
+                            <label asp-for="UserName" class="form-label"></label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-bg-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class=" mb-3  ">
+                        <div class="col-12 ">
+                            <label asp-for="GivenName" class="form-label"></label>
+                            <input asp-for="GivenName" class="form-control" />
+                            <span asp-validation-for="GivenName" class="text-bg-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class=" mb-3  ">
+                        <div class="col-12  ">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-bg-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class=" mb-3  ">
+                        <div class="col-12  ">
+                            <label asp-for="PasswordCheck" class="form-label"></label>
+                            <input asp-for="PasswordCheck" class="form-control" />
+                            <span asp-validation-for="PasswordCheck" class="text-bg-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3 col-12   text-center ">
+                        Zaten üye misiniz?   <a asp-action="Login">  Giriş </a>  yapın.
+
+                    </div>
+                    <div class="mb-3 col-12   text-center ">
+
+                        <button type="submit" class=" btn btn-danger w-100  ">Kaydol </button>
+                    </div>
+                   
+                </div>
+                </div>
+
+        </form>
+
+    </div>        
+            
+    
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+        

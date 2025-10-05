@@ -1,33 +1,37 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MVCEcommerce.Domain;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 
-namespace MVCEcommerce.Domain;
+namespace MVCECommerceData;
 
-public class Province  // iller tablosu
+public class Province
 {
     public int Id { get; set; }
     public string? Name { get; set; }
 
     public ICollection<City> Cities { get; set; } = new List<City>();
 }
+
 public class ProvinceConfiguration : IEntityTypeConfiguration<Province>
 {
     public void Configure(EntityTypeBuilder<Province> builder)
     {
-        //tpt
-        builder.ToTable("Province");
+        builder
+            .ToTable("Provinces");
 
-        builder.HasIndex(p=> new { p.Name })
+        builder
+            .HasIndex(p => new { p.Name })
             .IsUnique();
 
-        builder.Property(c => c.Name)
+        builder
+            .Property(p => p.Name)
             .IsRequired();
-        
-        builder.HasMany(p=>p.Cities)
-                .WithOne(p=>p.Province)
-                .HasForeignKey(p=>p.provinceId)
-                .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .HasMany(p => p.Cities)
+            .WithOne(p => p.Province)
+            .HasForeignKey(p => p.ProvinceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         builder.HasData(
     new Province { Id = 1, Name = "Adana" },

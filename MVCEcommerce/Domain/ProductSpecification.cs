@@ -1,26 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace MVCEcommerce.Domain;
+namespace MVCECommerceData;
 
-public class ProductSpecification  // ürünlerin hususi özelliklerin yer aldığı entity - ürünlerin spesifikasyonları
+public class ProductSpecification
 {
-    public Guid productId { get; set; }
-    public Guid specificitionId { get; set; }
-    public string Value { get; set; }
-        
+    public Guid ProductId { get; set; }
+    public Guid SpecificationId { get; set; }
+    public string? Value { get; set; }
 
+    public Product? Product { get; set; }
+    public Specification? Specification { get; set; }
 }
-public class ProductSpecificationonfiguration : IEntityTypeConfiguration<ProductSpecification>
+
+public class ProductSpecificationConfiguration : IEntityTypeConfiguration<ProductSpecification>
 {
     public void Configure(EntityTypeBuilder<ProductSpecification> builder)
     {
-        builder.ToTable("ProductSpecifications");
+        builder
+            .ToTable("ProductSpecifications");
 
-        builder.HasKey(p => new { p.productId, p.specificitionId });
+        builder
+            .HasKey(p => new { p.ProductId, p.SpecificationId });
 
-        builder.Property(p => p.Value)
+        builder
+            .Property(p => p.Value)
             .IsRequired();
-
     }
 }
