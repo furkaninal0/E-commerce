@@ -1,4 +1,4 @@
-﻿@model LoginUserViewModel
+﻿@model MVCEcommerce.Models.LoginUserViewModel
 @{
     Layout = "_AccountLayout";
     ViewData["Title"] = "Üye Girişi";
@@ -25,6 +25,12 @@
                             <label asp-for="Password" class="form-label"></label>
                             <input asp-for="Password" type="password" class="form-control" />
                             <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <label asp-for="IsPersistent" class="form-check-label"></label>
+                            <input asp-for="IsPersistent"  class="form-check-input" />
                         </div>
                     </div>
                     <div class="mb-3 col-12 text-center">

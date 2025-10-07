@@ -10,7 +10,6 @@
       ]
     },
     {
-      "provider": "cdnjs",
       "library": "bootstrap@5.3.8",
       "destination": "Theme/bootstrap/",
       "files": [
@@ -107,6 +106,14 @@
         "scss/_variables-dark.scss",
         "scss/_variables.scss"
       ]
+    },
+    {
+      "library": "jquery-validate@1.21.0",
+      "destination": "wwwroot/lib/jquery-validate/"
+    },
+    {
+      "library": "jquery-validation-unobtrusive@4.0.0",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
     }
   ]
 }

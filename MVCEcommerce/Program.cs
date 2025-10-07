@@ -4,6 +4,7 @@ using MVCEcommerce;
 using MVCECommerceData;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,9 +60,10 @@ builder
 var app = builder.Build();
 
 app.UseStaticFiles(); //*wwwroot için 
-
-app.UseAuthorization();  //yetki
+app.UseRouting(); 
 app.UseAuthentication(); //giriþ yetkisi
+app.UseAuthorization();  //yetki
+
 
 app.MapControllerRoute(
             name: "areas",
@@ -93,14 +95,19 @@ new Role {DisplayName= "Üyeler" , Name = "Members" , },
 
 
 var user = new User {
-
+    
     Date = DateTime.Now,
     Gender = Genders.Male,
     GivenName = "Ecommerce Admin", 
     UserName = "admin@mvc.com",
-    Email = " admin@mvc.com",
+    Email = "admin@mvc.com",
+    EmailConfirmed = true,
 };
+if (userManager.FindByNameAsync("admin@mvc.com").Result  is null)
+{
+    userManager.CreateAsync(user, "Mvc1234+").Wait();
+    userManager.AddToRoleAsync(user, "Administrators").Wait();
+    userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, user.GivenName)).Wait();
+}
 
-userManager.CreateAsync(user, "1").Wait();
-userManager.AddToRoleAsync(user , "Administrators").Wait();
 app.Run();

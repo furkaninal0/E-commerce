@@ -11,30 +11,35 @@ namespace MVCEcommerce.Controllers;
 public class AccountController(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
-    IEmailService emailService
+    IEmailService emailService,
+    DbcontextEcommerce dbContext
 
     ) : Controller
 
 {
     public IActionResult Login()
     {
-        return View(new LoginUserViewModel { });
+        return View(new LoginUserViewModel {IsPersistent = true});
     }
 
     [HttpPost]
     public async Task<IActionResult> Login(LoginUserViewModel model)
     {   
             var result = await signInManager.PasswordSignInAsync(
-            model.UserName,
-            model.Password,
-            isPersistent: false,
-            lockoutOnFailure: false);
+            model.UserName!,
+            model.Password!,
+            isPersistent: model.IsPersistent,
+            lockoutOnFailure: true);
 
         if (result.Succeeded)
         {
-            return RedirectToAction(model.ReturnUrl ?? "Index", "Home");
+            var user = await userManager.FindByNameAsync(model.UserName!);
+            if (!user.IsEnabled)
+                await signInManager.SignOutAsync();
+            else
+                return Redirect(model.ReturnUrl ?? "/");
         }
-        ModelState.AddModelError("", "Başarısız Giriş!");
+        ModelState.AddModelError("", "Geçersiz kullanıcı girişi");
         return View(model);
 
     }

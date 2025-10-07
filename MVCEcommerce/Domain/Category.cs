@@ -1,12 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+
 
 namespace MVCECommerceData;
 
 public class Category : _EntityBase
 {
     [Display(Name = "Ad (Tr)")]
+
     [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
     public string? NameTr { get; set; }
 
