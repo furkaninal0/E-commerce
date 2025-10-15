@@ -1,0 +1,105 @@
+﻿@model List<MVCECommerceData.Brand>
+@{
+    ViewData["Title"] = "Marka Listesi";
+
+}
+<div class=" p-3 d-flex justify-content-end ">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        Yeni Oluştur
+
+    </a>
+</div>
+<table class="table table-bordered table-striped-columns">
+    <colgroup>
+        <col  width="120"  />
+        <col width="160"/>
+        <col width="40" />
+        <col width="200" />
+
+    </colgroup>        
+    
+    <thead>
+
+        <tr>
+            <th>
+                Logo
+            </th>
+            <th>
+                Ad
+            </th>
+            <th>
+                Aktiflik
+            </th>
+            <th>
+                İşlemler
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td> 
+                    <img src="@Url.Action("Brand" , "Images", new {area = string.Empty, id=item.Id})" height= "90" width="90" onerror="this.error = null; this.src ='/images/noimage.png';" style="object-fit: contain" />  
+                </td>
+                <td class="align-content-center text-center" >  @item.Name  </td> 
+                <td class=" align-content-center text-center">
+                    @if (@item.IsEnabled)
+
+                    {
+                        <i class=" align-content-center text-center  fa fa-check text-success " aria-hidden="true"> </i>
+                    }
+                    else
+
+                    {
+                        <i class=" align-content-center text-center fa fa-times text-danger" aria-hidden="true"> </i>
+
+                    }
+
+
+                </td>
+                <td>
+                    <div class=" text-center justify-content-center ">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning mr-3 ">
+                            <i class="fa fa-pen" aria-hidden="true"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger remove-btn">
+                            <i class="fa fa-trash" aria-hidden="true"> </i>
+
+                        </a>
+                    </div>
+
+                </td>
+            </tr>
+
+        }
+    </tbody>
+
+</table>
+
+@section Scripts{
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        $(() => {
+            $('.remove-btn').on('click', (e) => {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'uyarı',
+                    html: 'Bu kayıt tamamen silinecektir. Onaylıyor musunuz?',
+                    showCancelButton: true,
+                    cancelButtonText: 'İptal',
+                    confirmButtonText: 'Sil',
+                })
+                    .then((result) => {
+                        if(result.isConfirmed)
+                        window.location = $(e.currentTarget).attr('href');
+                    });
+                return false;
+            });
+        });
+    </script>
+}

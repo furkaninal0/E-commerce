@@ -30,12 +30,12 @@ namespace MVCEcommerce
             builder.ApplyConfigurationsFromAssembly(typeof(DbcontextEcommerce).Assembly);
         }
 
-        public required DbSet<User> Users { get; set; }
 
         public required DbSet<Address> Addresses { get; set; }
         public required DbSet<Brand> Brands { get; set; }
         public required DbSet<Catalog> Catalogs { get; set; }
         public required DbSet<Category> Categories{ get; set; }
+        public required DbSet<CarouselImage> CarouselImages{ get; set; }
         public required DbSet<City> Cities{ get; set; }
         public required DbSet<Comment> Comments{ get; set; }
         public required DbSet<Order> Orders{ get; set; }

@@ -62,7 +62,7 @@ public class AccountController(
         var result = await userManager.CreateAsync(user, model.Password!);
         if (result.Succeeded)
         {
-            await userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, model.GivenName!));
+            //await userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, model.GivenName!));
             await userManager.AddToRoleAsync(user, "Members");
             //await signInManager.SignInAsync(user, isPersistent: false);
             //return RedirectToAction("Index", "Home");
