@@ -14,8 +14,8 @@ public class SpecsController(
     public async Task<IActionResult> Index()
     {
         var items = await dbcontext
-        .Specifications
-        .Include(p=>p.Category)
+        .Categories
+        .Include(p=>p.Specifications)
         .AsSplitQuery()
         .AsNoTracking()
         .OrderBy(p => p.NameTr)
