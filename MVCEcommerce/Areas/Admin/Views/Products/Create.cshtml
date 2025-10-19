@@ -25,7 +25,7 @@
             {
                 <div class="col spec-panel" data-category-id="@spec.CategoryId">
                     <div class="d-flex flex-column">
-                        <div class="p-2">r</div>
+                        <div class="p-2">@spec.NameTr</div>
                         <input type="text" class="form-control" name="@spec.Id" />
                     </div>
                 </div>
@@ -96,7 +96,7 @@
         </div>
         <div class="custom-file">
             <input type="file" class="custom-file-input" multiple asp-for="ImageFiles">
-            <label class="custom-file-label" asp-for="ImageFiles">Giğer ürün görsellerini seçiniz</label>
+            <label class="custom-file-label" asp-for="ImageFiles">Diğer ürün görsellerini seçiniz</label>
         </div>
     </div>
     <div class="mb-3">
@@ -110,21 +110,31 @@
         <button type="submit" class="btn btn-primary">Kaydet</button>
     </div>
 </form>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
+
 
 
 @section Scripts {
 
     <partial name="_ValidationScriptsPartial" />
 
+    // Gerekli Summernote CSS ve JS dosyalarını BURAYA ekleyin
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
     <script>
-        $(() => {
-            $('textarea').summernote({
-                height: 300,
+        // Sayfa tamamen yüklendiğinde bu kodun çalışmasını garantilemek için
+        // $(document).ready() kullanmak en sağlıklısıdır.
+        $(document).ready(function () {
+
+            // 'textarea' yerine doğrudan ID'leri hedeflemek daha güvenilirdir.
+            // Textarea'larınızın ID'leri: DescriptionTr ve DescriptionEn
+            $('#DescriptionTr').summernote({
+                height: 300
             });
+            $('#DescriptionEn').summernote({
+                height: 300
+            });
+            $('.spec-panel').addClass('d-none');
 
             const showSpecs = (e) => {
                 $('.spec-panel').addClass('d-none');
@@ -135,6 +145,7 @@
 
             $('#CategoryId').on('change', (e) => showSpecs($(e.currentTarget).val()));
 
+
             $('#ImageFile').on('change', (e) => {
                 const fileReader = new FileReader();
                 fileReader.onload = (e) => {
@@ -143,30 +154,23 @@
                 fileReader.readAsDataURL(e.currentTarget.files[0]);
             });
 
-
             $('#ImageFiles').on('change', (e) => {
-                $('#galleryPanel').empty(); // Önceki seçimleri temizle
+                $('#galleryPanel').empty();
                 const files = e.currentTarget.files;
-
-                // for...in yerine for...of kullanın. Bu hem daha güvenli hem de closure problemini çözer.
                 for (const file of files) {
-                    if (!file.type.startsWith('image/')) { continue } // Sadece resim dosyalarını işle
-
+                    if (!file.type.startsWith('image/')) { continue }
                     const fileReader = new FileReader();
-
                     fileReader.onload = (evt) => {
-                        // ID'ler benzersiz olmalı, bu yüzden class kullanmak daha mantıklı.
                         $('#galleryPanel').append(`
-                    <div class="border p-2 m-2">
-                        <img class="preview-gallery-image" src="${evt.target.result}" style="object-fit: cover;" width="160" height="120" />
-                    </div>
-                `);
+                                <div class="border p-2 m-2">
+                                    <img class="preview-gallery-image" src="${evt.target.result}" style="object-fit: cover;" width="160" height="120" />
+                                </div>
+                            `);
                     };
-                    fileReader.readAsDataURL(file); // Her döngüde doğru 'file' nesnesini okur
+                    fileReader.readAsDataURL(file);
                 }
             });
 
         });
     </script>
-
 }

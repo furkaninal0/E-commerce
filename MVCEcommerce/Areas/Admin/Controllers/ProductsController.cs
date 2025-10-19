@@ -34,7 +34,7 @@ DbcontextEcommerce dbContext
 
         var specs = await dbContext.Specifications.ToListAsync();
 
-        specs 
+        specs
             .Where(p => !string.IsNullOrEmpty(form[p.Id.ToString()]))
             .ToList()
             .ForEach(p =>
@@ -46,28 +46,20 @@ DbcontextEcommerce dbContext
                 });
             });
 
+        // --- ANA DÜZELTME BURADA ---
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp", "image/gif", "image/bmp" };
 
-        if (model.ImageFile is not null)
+        if (model.ImageFile is not null && model.ImageFile.Length > 0)
         {
-            using var image = await Image.LoadAsync(model.ImageFile.OpenReadStream());
-            image.Mutate(p =>
+            if (!allowedTypes.Contains(model.ImageFile.ContentType))
             {
-                p.Resize(new ResizeOptions
-                {
-                    Size = new Size(800, 600),
-                    Mode = ResizeMode.BoxPad
-                });
-            });
-            using var ms = new MemoryStream();
-            await image.SaveAsWebpAsync(ms);
-            model.Image = ms.ToArray();
-        }
+                ModelState.AddModelError("ImageFile", "Desteklenmeyen resim formatı (yalnızca JPG, PNG, WEBP, GIF, BMP).");
+                return View(model);
+            }
 
-        if (model.ImageFiles is not null)
-        {
-            foreach (var file in model.ImageFiles)
+            try
             {
-                using var image = await Image.LoadAsync(file.OpenReadStream());
+                using var image = await Image.LoadAsync(model.ImageFile.OpenReadStream());
                 image.Mutate(p =>
                 {
                     p.Resize(new ResizeOptions
@@ -78,16 +70,49 @@ DbcontextEcommerce dbContext
                 });
                 using var ms = new MemoryStream();
                 await image.SaveAsWebpAsync(ms);
-                model.ProductImages.Add(new ProductImage
-                {
-                    IsEnabled = true,
-                    CreatedAt = DateTime.UtcNow,
-                    Image = ms.ToArray()
-                });
+                model.Image = ms.ToArray();
             }
-
+            catch (UnknownImageFormatException)
+            {
+                ModelState.AddModelError("ImageFile", "Geçersiz veya bozuk resim formatı yüklendi.");
+                return View(model);
+            }
         }
 
+        if (model.ImageFiles is not null)
+        {
+            foreach (var file in model.ImageFiles)
+            {
+                if (file.Length == 0 || !allowedTypes.Contains(file.ContentType))
+                    continue;
+
+                try
+                {
+                    using var image = await Image.LoadAsync(file.OpenReadStream());
+                    image.Mutate(p =>
+                    {
+                        p.Resize(new ResizeOptions
+                        {
+                            Size = new Size(800, 600),
+                            Mode = ResizeMode.BoxPad
+                        });
+                    });
+                    using var ms = new MemoryStream();
+                    await image.SaveAsWebpAsync(ms);
+                    model.ProductImages.Add(new ProductImage
+                    {
+                        IsEnabled = true,
+                        CreatedAt = DateTime.UtcNow,
+                        Image = ms.ToArray()
+                    });
+                }
+                catch (UnknownImageFormatException)
+                {
+                    // Bu dosya desteklenmeyen bir formatta, sadece atla
+                    continue;
+                }
+            }
+        }
 
         if (model.SelectedCatalogs is not null)
             model.SelectedCatalogs.ToList().ForEach(p => model.Catalogs.Add(dbContext.Catalogs.Find(p)!));
@@ -97,6 +122,7 @@ DbcontextEcommerce dbContext
 
         return RedirectToAction(nameof(Index));
     }
+
 
 
     public async Task<IActionResult> Edit(Guid id)
