@@ -1,0 +1,82 @@
+﻿@inject DbcontextEcommerce dbContext
+@{
+    var featuredProducts = dbContext
+        .Products
+        .Where(p => p.IsEnabled)
+        .OrderByDescending(p => p.Views)
+        .Take(8)
+        .Select(p => new ProductTileViewModel
+        {
+            Id= p.Id,
+            Name = p.NameEn,
+            Price= p.Price,
+            CategoryId = p.Category.Id,
+            CategoryName = p.Category.NameEn,
+            BrandId = p.BrandId,
+            BrandName = p.Brand.Name
+        })
+       .ToList();
+
+    var newestproducts = dbContext.Products.Where(p => p.IsEnabled).OrderByDescending(p => p.CreatedAt).Take(8)
+        .Select(p => new ProductTileViewModel
+        {
+            Id = p.Id,
+            Name = p.NameEn,
+            Price = p.Price,
+            CategoryId = p.Category.Id,
+            CategoryName = p.Category.NameEn,
+            BrandId = p.BrandId,
+            BrandName = p.Brand.Name
+        })
+       .ToList();
+
+    var carouselImages = dbContext
+.CarouselImages
+.Where(p => p.IsEnabled && p.CatalogId == null)
+.Select(p => new { p.Id, p.Url })
+.ToList();
+}
+<section id="image-carousel" class="splide">
+    <div class="splide__track">
+        <ul class="splide__list">
+            @foreach (var image in carouselImages)
+            {
+                <li class="splide__slide">
+                    @if (image.Url == null)
+                    {
+                        <img src="@Url.Action("CarouselImage", "Images", new { id = image.Id })" alt="">
+                    }
+                    else
+                    {
+                        <a href="@image.Url" target="_blank">
+
+                            <img src="@Url.Action("CarouselImage", "Images", new { id = image.Id })" alt="">
+
+                        </a>
+                    }
+                </li>
+            }
+
+
+        </ul>
+    </div>
+</section>
+<header class="py-3 display-5">Son Eklenenler</header>
+<section>
+    <partial name="_ProductPartialList" model="featuredProducts" />
+
+</section>
+<header class="py-3 display-5">Öne Çıkanlar</header>
+<section>
+        <partial name="_ProductPartialList" model="newestproducts" />
+</section>
+
+    @section Scripts {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@splidejs/splide@4.1.4/dist/css/splide.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/@@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+        <script>
+            new Splide('#image-carousel').mount();
+        </script>
+
+    }
+

@@ -1,14 +1,20 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using MVCEcommerce;
 using MVCECommerceData;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
+using System.Globalization;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews(); //*
+builder.Services.AddMvc().AddViewLocalization();
+
+
+
 builder.Services.AddDbContext<DbcontextEcommerce>(config=>
 {
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -70,10 +76,25 @@ app.MapControllerRoute(
             pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
           );
 
+var supportedCultures = new[] { new CultureInfo("en-US"), new CultureInfo("tr-TR"), };
+
+var options = new RequestLocalizationOptions 
+{ 
+    DefaultRequestCulture = new RequestCulture("tr-TR"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+app.UseRequestLocalization(options);
+
 app.MapControllerRoute(
     name: "Catalog",
     pattern: "{name}-catalog-{id}",
     defaults: new { controller = "Home", action = "Index" }
+    );
+app.MapControllerRoute(
+    name: "Category",
+    pattern: "{name}-category-{id}",
+    defaults: new { controller = "Home", action = "Category" }
     );
 
 app.MapControllerRoute( 

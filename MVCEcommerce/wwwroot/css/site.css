@@ -11582,15 +11582,34 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.body {
+  font-family: "Inter", sans-serif;
+}
+
 .app-dropdown {
   width: 240px;
   margin-top: 16px;
   transition: 0.3s all ease;
   opacity: 0;
   visibility: hidden;
+  z-index: 999;
 }
 .app-dropdown.active {
   margin-top: 8px;
   opacity: 1;
   visibility: visible;
+}
+
+.splide__slide img {
+  width: 100%;
+  height: auto;
+}
+
+.app-product-name {
+  height: 48px;
+  overflow: hidden;
+}
+
+.app-dropdown-toggle {
+  position: relative;
 }

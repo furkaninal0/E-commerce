@@ -1,14 +1,16 @@
 ﻿@inject DbcontextEcommerce dbcontext
 @{
-    var catalogs = dbcontext.Catalogs.Where(p => p.IsEnabled).OrderBy(p => p.NameTr).ToList();
+    var catalogs = dbcontext.Catalogs.Where(p => p.IsEnabled).OrderBy(p => p.NameEn).ToList();
+    var categories = dbcontext.Categories.Where(p => p.IsEnabled).OrderBy(p => p.NameEn).ToList();
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title> MvcECommerce </title>
+    <title> @ViewData["Title"] - MVC E-Commerce </title>
     <meta name="viewport" content="width=device-width" />
     <link href="~/css/site.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -20,7 +22,13 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
@@ -28,30 +36,72 @@
 
 
                     <li class="nav-item app-dropdown-toggle">
-                        <a class="nav-link " href="#">Kataloglar</a>
+                        <a class="nav-link " href="#">Catalog</a>
                         <div class="app-dropdown">
                             <ul class="nav flex-column">
-                                    @foreach (var catalog in catalogs)
-                                    {
-                                        <li class="nav-item" >
-                                            <a class="nav-link" asp-route="Catalog" asp-route-name="@catalog.NameTr.ToSafeUrlString()" asp-route-id="@catalog.Id">@catalog.NameTr</a>
-                                         </li>    
+                                @foreach (var catalog in catalogs)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-truncate overflow-hidden app-dropdown-toggle" asp-route="Catalog" asp-route-name="@catalog.NameEn.ToSafeUrlString()" asp-route-id="@catalog.Id">@catalog.NameEn</a>
+                                    </li>
+
                                 }
                             </ul>
                         </div>
                     </li>
+                    <li class="nav-item app-dropdown-toggle">
+                        <a class="nav-link " href="#">Categories</a>
+                        <div class="app-dropdown">
+                            <ul class="nav flex-column">
+                                @foreach (var category in categories)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-truncate overflow-hidden app-dropdown-toggle" asp-route="Category" asp-route-name="@category.NameEn.ToSafeUrlString()" asp-route-id="@category.Id">@category.NameEn</a>
+                                    </li>
+
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Profile" asp-controller="Account">
+                                <i class="bi bi-person"></i>
+                                @User.FindFirst(ClaimTypes.GivenName)!.Value
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Logout" asp-controller="Account">
+                                <i class="bi bi-power "></i>
+                                Signout
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Login" asp-controller="Account">
+                                <i class="bi bi-person-check"></i>
+                                Signin
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Register" asp-controller="Account">
+                                <i class="bi bi-person-plus"></i>
+                                Register
+                            </a>
+                        </li>
+                    }
+
                 </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
-
-    @RenderBody()
-
-
+    <main class="container">
+        @RenderBody()
+    </main>
+ 
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

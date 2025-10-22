@@ -3,6 +3,10 @@ $enable-rounded: false;
 
 @import 'bootstrap/scss/bootstrap.scss';
 
+.body{
+    font-family: "Inter" , sans-serif;
+}
+
 .app-dropdown {
     @extend .position-absolute;
     @extend .border;
@@ -12,6 +16,7 @@ $enable-rounded: false;
     transition: .3s all ease;
     opacity: 0;
     visibility: hidden;
+    z-index: 999;
 
     &.active {
         margin-top: 8px;
@@ -20,3 +25,15 @@ $enable-rounded: false;
     }
 }
 
+.splide__slide img {
+    width: 100%;
+    height: auto;
+}
+.app-product-name{
+    height: 48px;
+    overflow: hidden;
+
+}
+.app-dropdown-toggle {
+    position: relative;
+}
