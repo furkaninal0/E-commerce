@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MVCEcommerce.Domain;
 using MVCECommerceData;
 
 namespace MVCEcommerce
@@ -46,6 +47,8 @@ namespace MVCEcommerce
         public required DbSet<ProductSpecification> ProductSpecifications{ get; set; }
         public required DbSet<ShoppingCartItem> ShoppingCartItems{ get; set; }
         public required DbSet<Specification> Specifications { get; set; }
+        public required DbSet<CreditCard> CreditCards{ get; set; }
+        public required DbSet<Installment> Installments{ get; set; }
     
 
 

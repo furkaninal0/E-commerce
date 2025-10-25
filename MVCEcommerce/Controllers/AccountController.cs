@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MVCEcommerce.Models;
 using MVCECommerceData;
 using NETCore.MailKit.Core;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace MVCEcommerce.Controllers;
 
@@ -158,6 +160,33 @@ public class AccountController(
         var result = await userManager.ResetPasswordAsync(user!, model.Token!, model.Password!);
         return View("SetPasswordSuccessMasallah");
 
+    }
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> AddToCart(Guid İd)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var product = await dbContext.Products.SingleAsync(p=>p.Id==İd);
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.UserId == userId && p.ProductId == İd);
+        if (item == null)
+        {
+
+            item = new ShoppingCartItem
+            {
+                ProductId = İd,
+                UserId = userId,
+                Quantity = 1,
+            };
+        dbContext.ShoppingCartItems.Add(item);
+        }
+
+        else
+        {
+            item.Quantity++;
+            dbContext.ShoppingCartItems.Update(item);
+        }
+        await dbContext.SaveChangesAsync();
+        return RedirectToRoute("Product", new { İd, name = product.NameEn.ToSafeUrlString() });
     }
 
 
