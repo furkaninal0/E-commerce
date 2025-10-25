@@ -1,0 +1,9 @@
+﻿@model IEnumerable<ProductTileViewModel>
+@{
+    ViewData["Title"] = "Search Result";
+}
+
+<header class="py-3 display-5">@ViewData["Title"]</header>
+<section>
+    <partial name="_ProductPartialList" model="Model" />
+</section>

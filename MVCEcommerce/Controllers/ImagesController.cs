@@ -14,14 +14,29 @@ public class ImagesController(DbcontextEcommerce dbContext) : Controller
             return File(item.Logo, "image/webp");
         }
 
-        [OutputCache(Duration = 86400)]
-        public async Task<IActionResult> Product(Guid id)
+    [OutputCache(Duration = 86400)]
+    public async Task<IActionResult> Product(Guid id)
+    {
+        var item = await dbContext.Products.FindAsync(id);
+
+        // Ürün bulunamadıysa
+        if (item == null)
         {
-            var item = await dbContext.Products.FindAsync(id);
-            return File(item.Image, "image/webp");
+            return NotFound("Ürün bulunamadı.");
         }
 
-        [OutputCache(Duration = 86400)]
+        // Resim yoksa varsayılan resim dön
+        if (item.Image == null)
+        {
+            var defaultImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/noimage.png");
+            var defaultImage = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+            return File(defaultImage, "image/webp");
+        }
+
+        return File(item.Image, "image/webp");
+    }
+
+    [OutputCache(Duration = 86400)]
         public async Task<IActionResult> ProductImage(Guid id)
         {
             var item = await dbContext.ProductImages.FindAsync(id);

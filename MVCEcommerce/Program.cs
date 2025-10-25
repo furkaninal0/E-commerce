@@ -89,14 +89,27 @@ app.UseRequestLocalization(options);
 app.MapControllerRoute(
     name: "Catalog",
     pattern: "{name}-catalog-{id}",
-    defaults: new { controller = "Home", action = "Index" }
+    defaults: new { controller = "Home", action = "Catalog" }
     );
 app.MapControllerRoute(
     name: "Category",
     pattern: "{name}-category-{id}",
     defaults: new { controller = "Home", action = "Category" }
     );
-
+app.MapControllerRoute(
+    name: "Brand",
+    pattern: "{name}-brand-{id}",
+    defaults: new { controller = "Home", action = "Brand" }
+    );
+app.MapControllerRoute(
+    name: "Product",
+    pattern: "{name}-product-{id}",
+    defaults: new { controller = "Home", action = "Detail" }
+    );
+app.MapControllerRoute(
+            name: "areas",
+            pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+          );
 app.MapControllerRoute( 
     name: "Default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
