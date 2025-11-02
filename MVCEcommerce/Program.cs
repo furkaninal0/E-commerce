@@ -85,7 +85,10 @@ var options = new RequestLocalizationOptions
     SupportedUICultures = supportedCultures
 };
 app.UseRequestLocalization(options);
-
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+    );
 app.MapControllerRoute(
     name: "Catalog",
     pattern: "{name}-catalog-{id}",
@@ -106,10 +109,7 @@ app.MapControllerRoute(
     pattern: "{name}-product-{id}",
     defaults: new { controller = "Home", action = "Detail" }
     );
-app.MapControllerRoute(
-            name: "areas",
-            pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
-          );
+
 app.MapControllerRoute( 
     name: "Default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

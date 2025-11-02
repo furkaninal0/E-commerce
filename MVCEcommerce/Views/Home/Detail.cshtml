@@ -84,9 +84,12 @@
                     ₺@Model.Price.ToString("n2")
                 </div>
                 <div>
-                    <a asp-action="AddToCart" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-success">
+                    <form asp-action="AddToCart" asp-controller="Account" asp-route-id="@Model.Id" 
+                          class="btn btn-success">
+                        <button type="submit" class="btn btn-success">
                         Add to Cart 
-                    </a>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -160,7 +163,7 @@
          </div>
     </div>
 </div>
-</div>
+
 
 @section Scripts {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@splidejs/splide@4.1.4/dist/css/splide.min.css">
@@ -177,6 +180,7 @@
                 gallerySplide.go(i);
             });
         });
+       
 </script>
 
 }

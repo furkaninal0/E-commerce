@@ -161,19 +161,20 @@ public class AccountController(
         return View("SetPasswordSuccessMasallah");
 
     }
-    [HttpPost]
+    
+    [HttpGet]
     [Authorize]
-    public async Task<IActionResult> AddToCart(Guid İd)
+    public async Task<IActionResult> AddToCart(Guid id)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var product = await dbContext.Products.SingleAsync(p=>p.Id==İd);
-        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.UserId == userId && p.ProductId == İd);
+        var product = await dbContext.Products.SingleAsync(p=>p.Id==id);
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.UserId == userId && p.ProductId == id);
         if (item == null)
         {
 
             item = new ShoppingCartItem
             {
-                ProductId = İd,
+                ProductId = id,
                 UserId = userId,
                 Quantity = 1,
             };
@@ -185,14 +186,68 @@ public class AccountController(
             item.Quantity++;
             dbContext.ShoppingCartItems.Update(item);
         }
+        TempData["success"] = "Product addet to your cart successfully!";
         await dbContext.SaveChangesAsync();
-        return RedirectToRoute("Product", new { İd, name = product.NameEn.ToSafeUrlString() });
+        return RedirectToRoute("Product", new { id, name = product.NameEn.ToSafeUrlString() });
+       
     }
+    [Authorize]
+    
+
+    public async Task<IActionResult> RemoveFromCart(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        await dbContext.ShoppingCartItems.Where(p=>p.Id == id && p.UserId == userId!).ExecuteDeleteAsync();
+        return RedirectToAction(nameof(Checkout));
+    }
+    [Authorize]
+
+    public IActionResult Checkout()
+    {
+        return View();
+    }
+    [Authorize]
+
+    public IActionResult Payment()
+    {
+        return View();
+    }
+    [Authorize]
+
+    public async Task<IActionResult> SetQuantity(Guid id, int Quantity)
+    {
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.Id == id);
+        item.Quantity=Quantity; 
+        dbContext.Update(item);
+        await dbContext.SaveChangesAsync();
+        return RedirectToAction(nameof(Checkout));
 
 
 
+    }
+    [Authorize]
+
+    public async Task<IActionResult> IncreaseQuantity(Guid id)
+    {
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.Id == id);
+        item.Quantity++;
+        dbContext.Update(item);
+        await dbContext.SaveChangesAsync();
+        return RedirectToAction(nameof(Checkout));
 
 
 
+    }
+    [Authorize]
+
+    public async Task<IActionResult> DescreaseQuantity(Guid id)
+    {
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.Id == id);
+        if (item.Quantity > 1)
+        item.Quantity--;
+        dbContext.Update(item);
+        await dbContext.SaveChangesAsync();
+        return RedirectToAction(nameof(Checkout));
+    }
 
 }

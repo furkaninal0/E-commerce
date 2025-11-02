@@ -85,7 +85,6 @@ public class CarouselImageController (
         item.IsEnabled = model.IsEnabled;
         item.CatalogId = model.CatalogId;
 
-        item.IsEnabled = model.IsEnabled;
         if (model.ImageFile is not null)
         {
             using var image = await Image.LoadAsync(model.ImageFile.OpenReadStream());
