@@ -320,6 +320,12 @@ public class AccountController(
         await dbContext.ShoppingCartItems.Where(p=>p.UserId==userId).ExecuteDeleteAsync();
         return Ok();
     }
+    public async Task<IActionResult> Profile()
+    {
+        var user = await userManager.GetUserAsync(User);
 
+
+        return View(user);
+    }
 
 }

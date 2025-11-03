@@ -11613,3 +11613,9 @@ textarea.form-control-lg {
 .app-dropdown-toggle {
   position: relative;
 }
+.table-tfoot {
+    display: table-footer-group !important;
+}
+.ttable {
+    border-collapse: collapse;
+}
