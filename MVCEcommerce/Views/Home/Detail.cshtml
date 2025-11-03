@@ -106,6 +106,19 @@
         <div class="tab-pane fade show active" id="nav-descriptions" role="tabpanel" aria-labelledby="nav-descriptions-tab">
             <div>
                 @Html.Raw(Model.DescriptionEn)
+                <h4> Specifications </h4>
+                <table class="table table-bordered">
+                    <tbody>
+                        @foreach (var spec in Model.Specs)
+                            {   
+                                <tr>
+                                    <th>@spec.Specification.NameEn</th>
+                                    <td>@spec.Value</td>
+                                </tr>
+                            }   
+                    </tbody>
+                </table>
+
             </div>
         </div>
         <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">...</div>

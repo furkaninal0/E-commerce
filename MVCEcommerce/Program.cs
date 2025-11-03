@@ -133,7 +133,7 @@ new Role {DisplayName= "Üyeler" , Name = "Members" , },
     roleManager.CreateAsync(p).Wait();
 });
 
-
+{ 
 var user = new User {
     
     Date = DateTime.Now,
@@ -149,5 +149,46 @@ if (userManager.FindByNameAsync("admin@mvc.com").Result  is null)
     userManager.AddToRoleAsync(user, "Administrators").Wait();
     userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, user.GivenName)).Wait();
 }
+}
 
+
+#if DEBUG
+{
+    var user = new User
+    {
+
+        Date = DateTime.Now,
+        Gender = Genders.Male,
+        GivenName = "Product Admin",
+        UserName = "padmin@mvc.com",
+        Email = "padmin@mvc.com",
+        EmailConfirmed = true,
+    };
+    if (userManager.FindByNameAsync("padmin@mvc.com").Result is null)
+    {
+        userManager.CreateAsync(user, "1+").Wait();
+        userManager.AddToRoleAsync(user, "ProductAdministrators").Wait();
+        userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, user.GivenName)).Wait();
+    }
+}
+
+{
+    var user = new User
+    {
+
+        Date = DateTime.Now,
+        Gender = Genders.Male,
+        GivenName = "Order Admin",
+        UserName = "oadmin@mvc.com",
+        Email = "oadmin@mvc.com",
+        EmailConfirmed = true,
+    };
+    if (userManager.FindByNameAsync("oadmin@mvc.com").Result is null)
+    {
+        userManager.CreateAsync(user, "12+").Wait();
+        userManager.AddToRoleAsync(user, "OrderAdministrators").Wait();
+        userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, user.GivenName)).Wait();
+    }
+}
+#endif
 app.Run();

@@ -249,5 +249,77 @@ public class AccountController(
         await dbContext.SaveChangesAsync();
         return RedirectToAction(nameof(Checkout));
     }
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateAddress([FromBody]AddressViewModel model)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var address = new Address
+        {
+            Name = model.Name,
+            Text = model.Text,
+            CityId = model.CityId,
+            ZipCode = model.ZipCode,
+            UserId = userId,
+        };
+        dbContext.Add(address);
+        await dbContext.SaveChangesAsync();
+        return Ok();
+    }
+    [Authorize]
+    public async Task<IActionResult> UserAddress()
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var model = await dbContext
+            .Addresses
+            .Where(a => a.UserId == userId)
+            .Select(p=> new { p.Id, p.Name, p.Text,  })
+            .ToListAsync();
+
+
+        return Json(model);
+    }
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Pay([FromBody]PaymentViewModel model)
+    {
+        if (model == null)
+            return BadRequest("Model null geldi.");
+
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString))
+            return Unauthorized("User not authenticated");
+
+        var userId = Guid.Parse(userIdString);
+        //payment logic here
+#if DEBUG
+        Thread.Sleep(5000);
+#endif
+
+        // /payment logic 
+        var order = new Order()
+        {
+            Date = DateTime.Now,
+            ShippingAddressId = model.ShippingAddressId,
+            UserId = userId,
+            Items = dbContext
+            .ShoppingCartItems
+            .Include(p => p.Product)
+            .Where(p => p.UserId == userId)
+            .Select(p => new OrderItem {
+                Price = p.Product.Price, 
+                Quantity = p.Quantity,
+                ProductId = p.ProductId,
+
+
+            }).ToList(),
+
+        };
+        dbContext.Add(order);
+        await dbContext.SaveChangesAsync();
+        await dbContext.ShoppingCartItems.Where(p=>p.UserId==userId).ExecuteDeleteAsync();
+        return Ok();
+    }
+
 
 }
