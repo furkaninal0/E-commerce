@@ -1,13 +1,40 @@
-﻿@inject DbcontextEcommerce dbcontext
+﻿@inject DbcontextEcommerce? dbcontext
+@using System.Security.Claims
+
 @{
-    var catalogs = dbcontext.Catalogs.Where(p => p.IsEnabled && p.Products.Any(q=>q.IsEnabled)).OrderBy(p => p.NameEn).ToList();
-    var categories = dbcontext.Categories.Where(p => p.IsEnabled && p.Products.Any(q => q.IsEnabled)).OrderBy(p => p.NameEn).ToList();
+    var catalogs = new List<Catalog>();
+    var categories = new List<Category>();
+    int shoppingCartCount = 0;
+
+    if (dbcontext != null)
+    {
+        catalogs = dbcontext.Catalogs
+            .Where(p => p.IsEnabled && p.Products.Any(q => q.IsEnabled))
+            .OrderBy(p => p.NameEn)
+            .ToList();
+
+        categories = dbcontext.Categories
+            .Where(p => p.IsEnabled && p.Products.Any(q => q.IsEnabled))
+            .OrderBy(p => p.NameEn)
+            .ToList();
+
+        if (User?.Identity?.IsAuthenticated ?? false)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userIdStr) && Guid.TryParse(userIdStr, out var userId))
+            {
+                shoppingCartCount = dbcontext.ShoppingCartItems
+                    .Where(p => p.UserId == userId)
+                    .Sum(p => (int?)p.Quantity) ?? 0;
+            }
+        }
+    }
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>  @ViewData["Title"] - MVC E-Commerce </title> 
+    <title>  @ViewData["Title"] - MVC E-Commerce </title>
     <meta name="viewport" content="width=device-width" />
     <link href="~/css/site.min.css" rel="stylesheet" />
     <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
@@ -63,23 +90,22 @@
                             </ul>
                         </div>
                     </li>
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                        var shoppingCarItem = dbcontext.ShoppingCartItems.Where(p => p.UserId == userId).Sum(p => p.Quantity);
+
 
                         <li class="nav-item">
                             <a class="nav-link" asp-action="Profile" asp-controller="Account">
                                 <i class="bi bi-person"></i>
-                                @User.FindFirst(ClaimTypes.GivenName)!.Value
+                                @User.FindFirst(ClaimTypes.GivenName)?.Value
 
                             </a>
                         </li>
                         <li class="nav-item me-2">
-                            <a  asp-action="Checkout" asp-controller="Account"  class="nav-item btn btn-link position-relative">
+                            <a asp-action="Checkout" asp-controller="Account" class="nav-item btn btn-link position-relative">
                                 <i class="bi bi-cart"></i>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    @(shoppingCarItem > 99 ? "99+" : shoppingCarItem)
+                                    @(shoppingCartCount > 99 ? "99+" : shoppingCartCount)
                                 </span>
                             </a>
                         </li>
@@ -114,6 +140,55 @@
         @RenderBody()
     </main>
 
+    <footer class="bg-dark text-white py-3 ">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-4">
+                    <ul class="nav flex-column">
+                        @foreach (var catalog in catalogs)
+                        {
+                            <li class="nav-item">
+
+                                <a asp-route="Catalog" asp-route-id="@catalog.Id" asp-route-name="@catalog.NameEn.ToSafeUrlString()" class="nav-link text-white">
+                                    @catalog.NameEn
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-12 col-md-4">
+                    <ul class="nav flex-column">
+                        @foreach (var category in categories)
+                        {
+                            <li class="nav-item">
+
+                                <a asp-route="Category" asp-route-id="@category.Id" asp-route-name="@category.NameEn.ToSafeUrlString()" class="nav-link text-white">
+                                    @category.NameEn
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-12 col-md-4 d-flex flex-column align-items-center gap-3 ">
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+
+                    <a href="www.instagram.com">
+                        <i class=" bi bi-instagram text-light fs-2"></i>
+                    </a>
+                    <a href="www.facebook.com">
+                        <i class=" bi bi-facebook text-light fs-2"></i>
+                    </a>
+                    <a href="www.tiktok.com">
+                        <i class=" bi bi-tiktok text-light fs-2"></i>
+                    </a>
+                    </div>
+                    <a href="mailto:destek@@mvcecommerce.com" class="text-warning text-decoration-none"">destek@@mvcecommerce.com</a>
+                    <a href="tel:+90 555 555 2222" class="text-warning text-decoration-none">+90 555 555 2222</a>
+</div>
+            </div>
+        </div>
+    </footer>
+
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.3/dist/sweetalert2.all.min.js"></script>
@@ -137,7 +212,7 @@
             html: '@TempData["success"]',
             toast: true,
             position: 'top-end'
-        })    
+        })
             </text>
         }
 

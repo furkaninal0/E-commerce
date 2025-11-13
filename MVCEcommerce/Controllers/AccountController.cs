@@ -37,9 +37,23 @@ public class AccountController(
         {
             var user = await userManager.FindByNameAsync(model.UserName!);
             if (!user.IsEnabled)
+            {
                 await signInManager.SignOutAsync();
+            }
+
             else
+            {
+                var claims = await userManager.GetClaimsAsync(user);
+                if (!claims.Any(c => c.Type == ClaimTypes.GivenName))
+                {
+                    await userManager.AddClaimAsync(
+                        user,
+                        new Claim(ClaimTypes.GivenName, user.GivenName ?? "")
+                    );
+                }
                 return Redirect(model.ReturnUrl ?? "/");
+            }
+
         }
         ModelState.AddModelError("", "Geçersiz kullanıcı girişi");
         return View(model);
@@ -64,7 +78,7 @@ public class AccountController(
         var result = await userManager.CreateAsync(user, model.Password!);
         if (result.Succeeded)
         {
-            //await userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, model.GivenName!));
+            await userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, model.GivenName!));
             await userManager.AddToRoleAsync(user, "Members");
             //await signInManager.SignInAsync(user, isPersistent: false);
             //return RedirectToAction("Index", "Home");
@@ -162,12 +176,17 @@ public class AccountController(
 
     }
     
-    [HttpGet]
+    [HttpPost]
     [Authorize]
     public async Task<IActionResult> AddToCart(Guid id)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var product = await dbContext.Products.SingleAsync(p=>p.Id==id);
+        var product = await dbContext.Products.SingleOrDefaultAsync(p => p.Id == id);
+        if (product == null)
+        {
+            TempData["error"] = "Product not found!";
+            return RedirectToAction("Index", "Home");
+        }
         var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.UserId == userId && p.ProductId == id);
         if (item == null)
         {
@@ -320,12 +339,39 @@ public class AccountController(
         await dbContext.ShoppingCartItems.Where(p=>p.UserId==userId).ExecuteDeleteAsync();
         return Ok();
     }
+    [Authorize]
     public async Task<IActionResult> Profile()
     {
         var user = await userManager.GetUserAsync(User);
 
 
         return View(user);
+    }
+    [Authorize]
+    public async Task<IActionResult> History()
+    {
+
+
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Comment(CommentViewModel model)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var comment = new Comment
+        {
+            Date = DateTime.UtcNow,
+            ProductId = model.ProductId,
+            Score = model.Rating,
+            UserId = userId,
+            Text = model.Text,
+        };
+        dbContext.Add(comment);
+        await dbContext.SaveChangesAsync();
+        return RedirectToRoute("Product" , new {id = model.ProductId, name= model.ProductName!.ToSafeUrlString() });
     }
 
 }
